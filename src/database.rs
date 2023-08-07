@@ -1,16 +1,16 @@
 
 // ===== Imports =====
-use bson::oid::ObjectId;
-use bson::doc;
+use std::convert::Infallible;
 use mongodb::Client;
 use mongodb::options::{ClientOptions};
-use futures::TryStreamExt;
+use warp::Filter;
 use crate::{
   config::*,
 };
 // ===================
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct DatabaseSession {
   client: Client,
   db: mongodb::Database,
@@ -27,22 +27,12 @@ impl DatabaseSession {
     Self { client, db }
   }
 
-  pub async fn get_users(&self) -> Vec<UserModel> {
-    let users_cursor = self.db.collection::<UserModel>("users")
-      .find(None, None)
-      .await.expect("Couldn't fetch users");
-    let users = users_cursor.try_collect::<Vec<UserModel>>()
-      .await.expect("Couldn't parse documents");
-
-    users
+  pub fn collection<T>(&self, name: &str) -> mongodb::Collection<T> {
+    self.db.collection::<T>(name)
   }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct UserModel {
-  #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-  id: Option<ObjectId>,
-  name: String,
-  email: String,
-  roles: Vec<String>,
+pub fn filter_with_db(db: DatabaseSession) -> impl Filter<Extract=(DatabaseSession,), Error=Infallible> + Clone {
+  warp::any()
+    .map(move || db.clone())
 }
