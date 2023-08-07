@@ -6,7 +6,7 @@ use mongodb::Client;
 use mongodb::options::{ClientOptions};
 use futures::TryStreamExt;
 use crate::{
-  config::GOFER_CONFIG,
+  config::*,
 };
 // ===================
 
@@ -18,7 +18,7 @@ pub struct DatabaseSession {
 
 impl DatabaseSession {
   pub async fn new() -> Self {
-    let conf = GOFER_CONFIG.lock().unwrap();
+    let conf = get_config();
     let options = ClientOptions::parse(&conf.mongodb_uri)
       .await.expect("Couldn't parse MongoDB Connection string");
     let client = Client::with_options(options).expect("Could not connect to MongoDB");
