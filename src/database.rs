@@ -1,9 +1,7 @@
 
 // ===== Imports =====
-use std::convert::Infallible;
 use mongodb::Client;
 use mongodb::options::{ClientOptions};
-use warp::Filter;
 use crate::{
   config::*,
 };
@@ -30,9 +28,4 @@ impl DatabaseSession {
   pub fn collection<T>(&self, name: &str) -> mongodb::Collection<T> {
     self.db.collection::<T>(name)
   }
-}
-
-pub fn filter_with_db(db: DatabaseSession) -> impl Filter<Extract=(DatabaseSession,), Error=Infallible> + Clone {
-  warp::any()
-    .map(move || db.clone())
 }
