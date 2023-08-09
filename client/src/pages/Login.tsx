@@ -5,7 +5,7 @@ import Page from '../components/Page';
 
 export default function Login() {
   return (
-    <Page>
+    <Page scroll={false}>
       <Text>Login</Text>
     </Page>
   );

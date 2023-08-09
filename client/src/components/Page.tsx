@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { createStyles, ScrollArea } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
@@ -12,14 +12,20 @@ const useStyles = createStyles((theme) => ({
 interface PageProps {
   children?: ReactNode,
   padding?: number,
+  scroll: boolean,
 };
 
-export default function Page({ children, padding = 10 }: PageProps) {
+export default function Page({ children, padding = 10, scroll }: PageProps) {
   const { classes } = useStyles();
 
   return (
-    <ScrollArea className={classes.mainContainer} style={{ padding }}>
-      {children}
-    </ScrollArea>
+    scroll ?
+      <ScrollArea className={classes.mainContainer} style={{ padding }}>
+        {children}
+      </ScrollArea>
+      :
+      <div className={classes.mainContainer} style={{ padding, overflowY: 'hidden' }}>
+        {children}
+      </div>
   );
 }

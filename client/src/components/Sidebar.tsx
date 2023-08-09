@@ -1,5 +1,8 @@
 
-import { createStyles, Text, ScrollArea } from '@mantine/core';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { IconHome, IconCalendar, IconSettings } from '@tabler/icons-react';
+import { createStyles, Grid, Text } from '@mantine/core';
+import { ReactNode } from 'react';
 
 const useStyles = createStyles((theme) => ({
   mainContainer: {
@@ -7,6 +10,7 @@ const useStyles = createStyles((theme) => ({
     height: '100vh',
     backgroundColor: "#141517",
     borderRight: "0.5px solid #242529",
+    padding: '15px',
   }
 }));
 
@@ -14,8 +18,51 @@ export default function Sidebar() {
   const { classes } = useStyles();
 
   return (
-    <ScrollArea className={classes.mainContainer}>
-      <Text>Sidebar</Text>
-    </ScrollArea>
+    <main className={classes.mainContainer}>
+      <SidebarButton to='/dashboard' icon={ <IconHome /> } title='Home' />
+      <SidebarButton to='/calendar' icon={ <IconCalendar /> } title='Calendar' />
+      <SidebarButton to='/settings' icon={ <IconSettings /> } title='Settings' />
+    </main>
+  );
+}
+
+const useStyles_SidebarButton = createStyles((theme) => ({
+  mainContainer: {
+    cursor: 'pointer',
+    width: '100%',
+    padding: '15px',
+  },
+  activeMainContainer: {
+    cursor: 'pointer',
+    width: '100%',
+    padding: '15px',
+    color: '#90CAF9',
+    fontWeight: 'bolder',
+  }
+}));
+
+
+interface SidebarButtonProps {
+  to: string,
+  icon: ReactNode,
+  title: string,
+}
+
+export function SidebarButton({
+  to, icon, title,
+} : SidebarButtonProps) {
+  let navigate = useNavigate();
+  let loc = useLocation();
+  let { classes } = useStyles_SidebarButton();
+
+  return (
+    <Grid gutter={0} onClick={() => navigate(to)} className={loc.pathname == to ? classes.activeMainContainer : classes.mainContainer}>
+      <Grid.Col span='content'>
+        {icon}
+      </Grid.Col>
+      <Grid.Col span='auto' style={{ paddingLeft: '15px' }}>
+        <Text className='heading-font'>{title}</Text>
+      </Grid.Col>
+    </Grid>
   );
 }
