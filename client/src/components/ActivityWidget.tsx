@@ -3,19 +3,19 @@ import { createStyles, Text, ScrollArea } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
   mainContainer: {
-    width: '250px',
+    width: '350px',
     height: '100vh',
     backgroundColor: "#141517",
-    borderRight: "0.5px solid #242529",
+    borderLeft: "0.5px solid #242529",
   }
 }));
 
-export default function Sidebar() {
+export default function ActivityWidget() {
   const { classes } = useStyles();
 
   return (
     <ScrollArea className={classes.mainContainer}>
-      <Text>Sidebar</Text>
+      <Text>Activity</Text>
     </ScrollArea>
   );
 }
