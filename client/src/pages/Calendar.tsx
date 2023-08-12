@@ -12,7 +12,7 @@ const useStyles = createStyles({
 });
 
 export default function Calendar() {
-  let { classes } = useStyles();
+  let {} = useStyles();
 
   return (
     <Page padding={ 30 } scroll={false}>

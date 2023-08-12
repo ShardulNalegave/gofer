@@ -6,10 +6,9 @@ import {
   Image,
   Center,
   Divider,
-  ScrollArea,
 } from '@mantine/core';
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((_) => ({
   mainContainer: {
     width: '400px',
     height: '100vh',
