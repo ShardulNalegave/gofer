@@ -1,37 +1,21 @@
 
+import { readFileSync } from 'fs';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
-import { typeDefs } from './schema.js';
+import { Resolvers } from './resolvers.js';
 
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
+const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
 
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-};
+// Load .env file
+dotenv.config();
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
-
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
+await mongoose.connect(`${process.env.GOFER_MONGODB_URI}/${process.env.GOFER_MONGODB_DATABASE}`);
+const server = new ApolloServer({ typeDefs, resolvers: Resolvers });
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });
 
-console.log(`🚀  Server ready at: ${url}`);
+console.log(`Listening at: ${url}`);
