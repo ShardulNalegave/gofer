@@ -22,8 +22,12 @@ export const ProjectSchema = new Schema<IProject>({
   },
 });
 
-export const ProjectModel = model('Project', ProjectSchema);
+export const ProjectModel = model('Project', ProjectSchema, 'projects');
 
 export async function getProjects() {
   return await ProjectModel.find();
+}
+
+export async function getProject(filter) {
+  return await ProjectModel.findOne(filter);
 }

@@ -17,8 +17,12 @@ export const RoleSchema = new Schema<IRole>({
   },
 });
 
-export const RoleModel = model('Role', RoleSchema);
+export const RoleModel = model('Role', RoleSchema, 'roles');
 
 export async function getRoles() {
   return await RoleModel.find();
+}
+
+export async function getRole(filter) {
+  return await RoleModel.findOne(filter);
 }

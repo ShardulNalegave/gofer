@@ -1,29 +1,55 @@
 
-type Query {
-  users: [User]
-  roles: [Role]
-  projects: [Project]
-  tasks: [Task]
+schema {
+  query: RootQuery,
+  mutation: RootMutation,
+}
+
+type RootQuery {
+  users: [User!]
+  roles: [Role!]
+  projects: [Project!]
+  tasks: [Task!]
+
+  user_by_id(id: String!): User
+  user_by_email(email: String!): User
+
+  role(id: String!): Role
+
+  project(id: String!): Project
+
+  task(id: String!): Task
+
+  login(email: String!, password: String!): AuthData!
+}
+
+type RootMutation {
+  createUser(name: String!, email: String!, password: String!): User
+}
+
+type AuthData {
+  userID: String!
+  token: String!
+  tokenExpiration: Int!
 }
 
 type User {
   id: String
   name: String
   email: String
-  roles: [Role]
+  roles: [Role!]
 }
 
 type Role {
   id: String
   title: String
-  rights: [String]
+  rights: [String!]
 }
 
 type Project {
   id: String
   title: String
   description: String
-  tasks: [Task]
+  tasks: [Task!]
 }
 
 type Task {

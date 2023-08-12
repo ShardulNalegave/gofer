@@ -4,6 +4,7 @@ import { Schema, model } from 'mongoose';
 export interface IUser {
   name: string,
   email: string,
+  passwordHash: string,
   roles: string[],
 }
 
@@ -16,14 +17,22 @@ export const UserSchema = new Schema<IUser>({
     type: String,
     required: true,
   },
+  passwordHash: {
+    type: String,
+    required: true,
+  },
   roles: {
     type: [String],
     required: true,
   },
 });
 
-export const UserModel = model('User', UserSchema);
+export const UserModel = model('User', UserSchema, 'users');
 
 export async function getUsers() {
   return await UserModel.find();
+}
+
+export async function getUser(filter) {
+  return await UserModel.findOne(filter);
 }
