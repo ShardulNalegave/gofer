@@ -1,5 +1,4 @@
 
-import bcrypt from 'bcrypt';
 import { readFileSync } from 'fs';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
