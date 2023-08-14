@@ -24,6 +24,7 @@ export const UserSchema = new Schema<IUser>({
   roles: {
     type: [String],
     required: true,
+    default: [],
   },
 });
 

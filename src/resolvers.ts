@@ -19,5 +19,16 @@ export const Resolvers = {
     ...RoleResolvers.mutations,
     ...TaskResolvers.mutations,
     ...ProjectResolvers.mutations,
-  }
+  },
+
+  Right: {
+    USERS_CREATE: 'users/create',
+    USERS_UPDATE: 'users/update',
+    ROLES_CREATE: 'roles/create',
+    ROLES_UPDATE: 'roles/update',
+    PROJECTS_CREATE: 'projects/create',
+    PROJECTS_UPDATE: 'projects/update',
+    TASKS_CREATE: 'tasks/create',
+    TASKS_UPDATE: 'tasks/update',
+  },
 }

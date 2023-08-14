@@ -14,6 +14,7 @@ export const RoleSchema = new Schema<IRole>({
   rights: {
     type: [String],
     required: true,
+    default: [],
   },
 });
 

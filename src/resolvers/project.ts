@@ -1,14 +1,14 @@
 
-import { ProjectModel } from "../models/project.js";
+import { getProject, getProjects } from "../utils.js";
 
 export const ProjectResolvers = {
   queries: {
     async projects() {
-      return await ProjectModel.find();
+      return await getProjects({});
     },
 
     async project(_parent, args, _contextValue, _info) {
-      return await ProjectModel.findOne({ _id: args.id });
+      return await getProject({ _id: args.id });
     },
   },
 

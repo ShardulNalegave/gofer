@@ -4,6 +4,7 @@ import { Schema, model } from 'mongoose';
 export interface IProject {
   title: string,
   description: string,
+  assignees: string[],
 }
 
 export const ProjectSchema = new Schema<IProject>({
@@ -14,6 +15,11 @@ export const ProjectSchema = new Schema<IProject>({
   description: {
     type: String,
     required: true,
+  },
+  assignees: {
+    type: [String],
+    required: true,
+    default: [],
   },
 });
 

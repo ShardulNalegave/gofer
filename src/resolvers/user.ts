@@ -1,18 +1,18 @@
 
-import { UserModel } from "../models/user.js";
+import { getUser, getUsers } from "../utils.js";
 
 export const UserResolvers = {
   queries: {
     async users() {
-      return await UserModel.find();
+      return await getUsers({});
     },
 
     async userByEmail(_parent, args, _contextValue, _info) {
-      return await UserModel.findOne({ email: args.email });
+      return await getUser({ email: args.email });
     },
 
     async userByID(_parent, args, _contextValue, _info) {
-      return await UserModel.findOne({ _id: args.id });
+      return await getUser({ _id: args.id });
     },
   },
 
