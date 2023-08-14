@@ -2,12 +2,12 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-import { UserModel, getUser } from "../models/user.js";
+import { UserModel } from "../models/user.js";
 
 export const AuthResolvers = {
   queries: {
     async login(_parent, args, _contextValue, _info) {
-      const user = await getUser({ email: args.email });
+      const user = await UserModel.findOne({ email: args.email });
       if (!user) throw new Error('User does not exist!');
 
       const isPassCorrect = await bcrypt.compare(args.password, user.passwordHash);
@@ -32,7 +32,7 @@ export const AuthResolvers = {
   mutations: {
     async createUser(_parent, args, _contextValue, _info) {
       try {
-        const existingUser = await getUser({ email: args.email });
+        const existingUser = await UserModel.findOne({ email: args.email });
         if (existingUser) throw new Error('User already exists!');
 
         const passwordHash = await bcrypt.hash(args.password, 12);

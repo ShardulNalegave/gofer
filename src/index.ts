@@ -1,9 +1,14 @@
 
+import http from 'http';
 import { readFileSync } from 'fs';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
 import { Resolvers } from './resolvers.js';
 
@@ -13,9 +18,28 @@ const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
 dotenv.config();
 
 await mongoose.connect(`${process.env.GOFER_MONGODB_URI}/${process.env.GOFER_MONGODB_DATABASE}`);
-const server = new ApolloServer({ typeDefs, resolvers: Resolvers });
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
+
+const app = express();
+const httpServer = http.createServer(app);
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers: Resolvers,
+  plugins: [ ApolloServerPluginDrainHttpServer({ httpServer }) ],
+});
+await server.start();
+
+app.use(
+  '/',
+  cors<cors.CorsRequest>({
+    origin: [],
+  }),
+  bodyParser.json(),
+  expressMiddleware(server),
+)
+
+await new Promise<void>(resolve => {
+  httpServer.listen(Number(process.env.GOFER_PORT), process.env.GOFER_HOST, resolve);
 });
 
-console.log(`Listening at: ${url}`);
+console.log(`Listening at: http://${process.env.GOFER_HOST}:${process.env.GOFER_PORT}`);

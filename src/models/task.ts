@@ -23,11 +23,3 @@ export const TaskSchema = new Schema<ITask>({
 });
 
 export const TaskModel = model('Task', TaskSchema, 'tasks');
-
-export async function getTasks() {
-  return await TaskModel.find();
-}
-
-export async function getTask(filter) {
-  return await TaskModel.findOne(filter);
-}

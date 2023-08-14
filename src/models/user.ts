@@ -28,11 +28,3 @@ export const UserSchema = new Schema<IUser>({
 });
 
 export const UserModel = model('User', UserSchema, 'users');
-
-export async function getUsers() {
-  return await UserModel.find();
-}
-
-export async function getUser(filter) {
-  return await UserModel.findOne(filter);
-}
