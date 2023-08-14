@@ -99,6 +99,7 @@ type User {
 input UserInput {
   name: String
   email: String
+  password: String
 }
 
 input UserUpdate {

@@ -4,6 +4,17 @@ import { RoleModel } from "./models/role.js";
 import { TaskModel } from "./models/task.js";
 import { ProjectModel } from "./models/project.js";
 
+export enum Right {
+  USERS_CREATE = "USERS_CREATE",
+  USERS_UPDATE = "USERS_UPDATE",
+  ROLES_CREATE = "ROLES_CREATE",
+  ROLES_UPDATE = "ROLES_UPDATE",
+  TASKS_CREATE = "TASKS_CREATE",
+  TASKS_UPDATE = "TASKS_UPDATE",
+  PROJECTS_CREATE = "PROJECTS_CREATE",
+  PROJECTS_UPDATE = "PROJECTS_UPDATE",
+}
+
 export const getUser = async filter => {
   let data = await UserModel.findOne(filter);
   let roles = getRoles.bind(this, {

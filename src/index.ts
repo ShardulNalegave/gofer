@@ -11,6 +11,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
 import { Resolvers } from './resolvers.js';
+import { APIContext, getAPIContext } from './context.js';
 
 const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
 
@@ -22,7 +23,7 @@ await mongoose.connect(`${process.env.GOFER_MONGODB_URI}/${process.env.GOFER_MON
 const app = express();
 const httpServer = http.createServer(app);
 
-const server = new ApolloServer({
+const server = new ApolloServer<APIContext>({
   typeDefs,
   resolvers: Resolvers,
   plugins: [ ApolloServerPluginDrainHttpServer({ httpServer }) ],
@@ -35,7 +36,9 @@ app.use(
     origin: [],
   }),
   bodyParser.json(),
-  expressMiddleware(server),
+  expressMiddleware<APIContext>(server, {
+    context: async ({ req }) => getAPIContext(req),
+  }),
 )
 
 await new Promise<void>(resolve => {

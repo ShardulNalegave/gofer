@@ -1,4 +1,5 @@
 
+import { Right } from './utils.js';
 import { AuthResolvers } from './resolvers/auth.js';
 import { UserResolvers } from './resolvers/user.js';
 import { RoleResolvers } from './resolvers/role.js';
@@ -22,13 +23,13 @@ export const Resolvers = {
   },
 
   Right: {
-    USERS_CREATE: 'users/create',
-    USERS_UPDATE: 'users/update',
-    ROLES_CREATE: 'roles/create',
-    ROLES_UPDATE: 'roles/update',
-    PROJECTS_CREATE: 'projects/create',
-    PROJECTS_UPDATE: 'projects/update',
-    TASKS_CREATE: 'tasks/create',
-    TASKS_UPDATE: 'tasks/update',
+    USERS_CREATE: Right.USERS_CREATE,
+    USERS_UPDATE: Right.USERS_UPDATE,
+    ROLES_CREATE: Right.ROLES_CREATE,
+    ROLES_UPDATE: Right.ROLES_UPDATE,
+    TASKS_CREATE: Right.TASKS_CREATE,
+    TASKS_UPDATE: Right.TASKS_UPDATE,
+    PROJECTS_CREATE: Right.PROJECTS_CREATE,
+    PROJECTS_UPDATE: Right.PROJECTS_UPDATE,
   },
 }
