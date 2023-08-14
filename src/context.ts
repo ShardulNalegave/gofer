@@ -6,6 +6,7 @@ import { Right, getUser } from './utils.js';
 
 export interface APIContext {
   isAuth: boolean,
+  authError?: string,
   token?: string,
   userID?: string,
   userEmail?: string,
@@ -27,7 +28,10 @@ export async function getAPIContext(req: Request): Promise<APIContext> {
   try {
     decodedToken = jwt.verify(token, process.env.GOFER_JWT_SECRET_KEY);
   } catch (err) {
-    return { isAuth: false };
+    return {
+      isAuth: false,
+      authError: err,
+    };
   }
 
   if (!decodedToken) {

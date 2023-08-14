@@ -7,7 +7,8 @@
     "compile": "tsc",
     "watch-compile": "tsc --watch",
     "start": "npm run compile && node ./dist/index.js",
-    "dev": "concurrently \"npm run watch-compile\" \"nodemon ./dist/index.js\""
+    "dev": "concurrently \"npm run watch-compile\" \"nodemon ./dist/index.js\"",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "author": "Shardul Nalegave <nalegaveshardul40@gmail.com>",
   "type": "module",
@@ -29,7 +30,6 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.2",
-    "@types/mongoose": "^5.11.97",
     "@types/node": "^20.4.10",
     "concurrently": "^8.2.0",
     "nodemon": "^3.0.1"

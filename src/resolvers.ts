@@ -1,25 +1,25 @@
 
 import { Right } from './utils.js';
-import { AuthResolvers } from './resolvers/auth.js';
-import { UserResolvers } from './resolvers/user.js';
-import { RoleResolvers } from './resolvers/role.js';
-import { TaskResolvers } from './resolvers/task.js';
-import { ProjectResolvers } from './resolvers/project.js';
+import { authResolvers } from './resolvers/auth.js';
+import { userResolvers } from './resolvers/user.js';
+import { roleResolvers } from './resolvers/role.js';
+import { taskResolvers } from './resolvers/task.js';
+import { projectResolvers } from './resolvers/project.js';
 
-export const Resolvers = {
+export const resolvers = {
   RootQuery: {
-    ...AuthResolvers.queries,
-    ...UserResolvers.queries,
-    ...RoleResolvers.queries,
-    ...TaskResolvers.queries,
-    ...ProjectResolvers.queries,
+    ...authResolvers.queries,
+    ...userResolvers.queries,
+    ...roleResolvers.queries,
+    ...taskResolvers.queries,
+    ...projectResolvers.queries,
   },
   RootMutation: {
-    ...AuthResolvers.mutations,
-    ...UserResolvers.mutations,
-    ...RoleResolvers.mutations,
-    ...TaskResolvers.mutations,
-    ...ProjectResolvers.mutations,
+    ...authResolvers.mutations,
+    ...userResolvers.mutations,
+    ...roleResolvers.mutations,
+    ...taskResolvers.mutations,
+    ...projectResolvers.mutations,
   },
 
   Right: {

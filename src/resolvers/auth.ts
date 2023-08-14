@@ -6,7 +6,7 @@ import { APIContext } from '../context.js';
 import { UserModel } from "../models/user.js";
 import { Right, getUser } from '../utils.js';
 
-export const AuthResolvers = {
+export const authResolvers = {
   queries: {
     async login(_parent, args, _contextValue: APIContext, _info) {
       const user = await UserModel.findOne({ email: args.email });

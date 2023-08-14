@@ -10,7 +10,7 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
-import { Resolvers } from './resolvers.js';
+import { resolvers } from './resolvers.js';
 import { APIContext, getAPIContext } from './context.js';
 
 const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
@@ -25,7 +25,7 @@ const httpServer = http.createServer(app);
 
 const server = new ApolloServer<APIContext>({
   typeDefs,
-  resolvers: Resolvers,
+  resolvers,
   plugins: [ ApolloServerPluginDrainHttpServer({ httpServer }) ],
 });
 await server.start();
