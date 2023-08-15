@@ -7,6 +7,7 @@ import {
   Center,
   Divider,
 } from '@mantine/core';
+import Spacer from './Spacer';
 
 const useStyles = createStyles((_) => ({
   mainContainer: {
@@ -39,14 +40,14 @@ export default function ActivityWidget() {
             withPlaceholder
           ></Image>
         </Center>
-        <div style={{ height: '25px' }}></div>
+        <Spacer height={25} />
         <Title style={{ fontSize: '20px' }}>Shardul Nalegave</Title>
-        <div style={{ height: '5px' }}></div>
+        <Spacer height={5} />
         <Text className='mono-font' style={{ fontSize: '13px' }}>nalegaveshardul40@gmail.com</Text>
       </div>
-      <div style={{ height: '15px' }}></div>
+      <Spacer height={15} />
       <Divider label='Activity' labelPosition='center' />
-      <div style={{ height: '15px' }}></div>
+      <Spacer height={15} />
     </main>
   );
 }

@@ -1,10 +1,11 @@
 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { IconHome, IconCalendar, IconSettings } from '@tabler/icons-react';
 import { createStyles, Grid, Text } from '@mantine/core';
 import { ReactNode } from 'react';
+import { useGoToRoute } from '../hooks/useGoToRoute';
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((_) => ({
   mainContainer: {
     width: '250px',
     height: '100vh',
@@ -26,7 +27,7 @@ export default function Sidebar() {
   );
 }
 
-const useStyles_SidebarButton = createStyles((theme) => ({
+const useStyles_SidebarButton = createStyles((_) => ({
   mainContainer: {
     cursor: 'pointer',
     width: '100%',
@@ -51,12 +52,12 @@ interface SidebarButtonProps {
 export function SidebarButton({
   to, icon, title,
 } : SidebarButtonProps) {
-  let navigate = useNavigate();
+  let goToRoute = useGoToRoute();
   let loc = useLocation();
   let { classes } = useStyles_SidebarButton();
 
   return (
-    <Grid gutter={0} onClick={() => navigate(to)} className={loc.pathname == to ? classes.activeMainContainer : classes.mainContainer}>
+    <Grid gutter={0} onClick={() => goToRoute(to)} className={loc.pathname == to ? classes.activeMainContainer : classes.mainContainer}>
       <Grid.Col span='content'>
         {icon}
       </Grid.Col>

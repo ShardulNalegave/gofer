@@ -3,6 +3,7 @@ import { createStyles } from '@mantine/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
+
 import Page from '../components/Page';
 
 const useStyles = createStyles({

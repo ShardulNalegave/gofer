@@ -33,7 +33,7 @@ await server.start();
 app.use(
   '/',
   cors<cors.CorsRequest>({
-    origin: [],
+    origin: [ 'http://localhost:5173' ],
   }),
   bodyParser.json(),
   expressMiddleware<APIContext>(server, {

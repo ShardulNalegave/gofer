@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { createStyles, ScrollArea } from '@mantine/core';
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles((_) => ({
   mainContainer: {
     width: '100%',
     height: '100vh',

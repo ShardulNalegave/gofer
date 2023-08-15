@@ -3,14 +3,10 @@ import { createStyles, Text } from '@mantine/core';
 
 import Page from '../components/Page';
 
-const useStyles = createStyles({
-  greetingText: {
-    fontSize: '60px',
-  },
-});
+const useStyles = createStyles({});
 
 export default function Settings() {
-  let { classes } = useStyles();
+  let {} = useStyles();
 
   return (
     <Page padding={ 30 } scroll={true}>

@@ -23,3 +23,6 @@ export const router = createBrowserRouter(
 );
 
 export const routesCompleteUI = ['/dashboard', '/calendar', '/settings'];
+
+export const authProtectedRoutes = ['/dashboard', '/calendar', '/settings'];
+export const authUnprotectedRoute = ['/login'];
