@@ -13,12 +13,15 @@ export default function App() {
   let authData = useAuth();
 
   useEffect(() => {
-    if (authProtectedRoutes.includes(loc.pathname) && !authData.isAuth) {
-      navigate('/login');
-    } else if (authUnprotectedRoute.includes(loc.pathname) && authData.isAuth) {
-      navigate('/dashboard');
-    }
-  }, []);
+    (async () => {
+      await authData.validate();
+      if (authProtectedRoutes.includes(loc.pathname) && !authData.isAuth) {
+        navigate('/login');
+      } else if (authUnprotectedRoute.includes(loc.pathname) && authData.isAuth) {
+        navigate('/dashboard');
+      }
+    })();
+  }, [loc]);
 
   return (
     <Grid gutter={0}>

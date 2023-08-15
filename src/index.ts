@@ -9,9 +9,12 @@ import cors from 'cors';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 
 import { resolvers } from './resolvers.js';
-import { APIContext, getAPIContext } from './context.js';
+import { APIContext, getAPIContext_Express, getAPIContext_WebSocket } from './context.js';
 
 const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
 
@@ -23,10 +26,34 @@ await mongoose.connect(`${process.env.GOFER_MONGODB_URI}/${process.env.GOFER_MON
 const app = express();
 const httpServer = http.createServer(app);
 
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: '/',
+});
+const serverCleanup = useServer({
+  schema,
+  context: async (ctx, msg, args) => {
+    return await getAPIContext_WebSocket(ctx, msg, args);
+  },
+}, wsServer);
+
 const server = new ApolloServer<APIContext>({
-  typeDefs,
-  resolvers,
-  plugins: [ ApolloServerPluginDrainHttpServer({ httpServer }) ],
+  schema,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          }
+        }
+      },
+    },
+  ],
 });
 await server.start();
 
@@ -37,7 +64,7 @@ app.use(
   }),
   bodyParser.json(),
   expressMiddleware<APIContext>(server, {
-    context: async ({ req }) => getAPIContext(req),
+    context: async ({ req }) => getAPIContext_Express(req),
   }),
 )
 

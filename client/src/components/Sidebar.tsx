@@ -1,9 +1,11 @@
 
-import { useLocation } from 'react-router-dom';
-import { IconHome, IconCalendar, IconSettings } from '@tabler/icons-react';
-import { createStyles, Grid, Text } from '@mantine/core';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { IconHome, IconCalendar, IconSettings, IconChecklist, IconBulbFilled } from '@tabler/icons-react';
+import { Button, createStyles, Grid, Text } from '@mantine/core';
 import { ReactNode } from 'react';
-import { useGoToRoute } from '../hooks/useGoToRoute';
+
+import { useAuth } from '../contexts/Auth';
+import Spacer from './Spacer';
 
 const useStyles = createStyles((_) => ({
   mainContainer: {
@@ -17,12 +19,20 @@ const useStyles = createStyles((_) => ({
 
 export default function Sidebar() {
   const { classes } = useStyles();
+  const authData = useAuth();
+  const navigate = useNavigate();
 
   return (
     <main className={classes.mainContainer}>
       <SidebarButton to='/dashboard' icon={ <IconHome /> } title='Home' />
       <SidebarButton to='/calendar' icon={ <IconCalendar /> } title='Calendar' />
+      <SidebarButton to='/tasks' icon={ <IconChecklist /> } title='Tasks' />
+      <SidebarButton to='/projects' icon={ <IconBulbFilled /> } title='Projects' />
       <SidebarButton to='/settings' icon={ <IconSettings /> } title='Settings' />
+      <Spacer height={15} />
+      <Button style={{ width: '100%' }} color='red' onClick={() => {
+        authData.logout().then(_ => navigate('/login'));
+      }}>Log Out</Button>
     </main>
   );
 }
@@ -52,12 +62,12 @@ interface SidebarButtonProps {
 export function SidebarButton({
   to, icon, title,
 } : SidebarButtonProps) {
-  let goToRoute = useGoToRoute();
+  let navigate = useNavigate();
   let loc = useLocation();
   let { classes } = useStyles_SidebarButton();
 
   return (
-    <Grid gutter={0} onClick={() => goToRoute(to)} className={loc.pathname == to ? classes.activeMainContainer : classes.mainContainer}>
+    <Grid gutter={0} onClick={() => navigate(to)} className={loc.pathname == to ? classes.activeMainContainer : classes.mainContainer}>
       <Grid.Col span='content'>
         {icon}
       </Grid.Col>

@@ -1,6 +1,7 @@
 
 import { APIContext } from "../context.js";
 import { UserModel } from "../models/user.js";
+import { Events, pubsub } from "../pubsub.js";
 import { Right, getUser, getUsers } from "../utils.js";
 
 export const userResolvers = {
@@ -33,10 +34,27 @@ export const userResolvers = {
         ...user.toObject(),
         ...userUpdateData,
       });
+
+      pubsub.publish(Events.USERS_UPDATE, {
+        users: getUsers.bind(this, {}),
+      });
+
+      if (userID == ctx.userID) pubsub.publish(Events.CURRENT_USER_UPDATED, {
+        loggedInUserData: getUser.bind(this, { _id: userID })
+      });
   
       return await getUser({
         _id: userID,
       });
+    },
+  },
+
+  subscriptions: {
+    users: {
+      subscribe: () => pubsub.asyncIterator([Events.USERS_UPDATE]),
+    },
+    loggedInUserData: {
+      subscribe: () => pubsub.asyncIterator([Events.CURRENT_USER_UPDATED]),
     },
   },
 };

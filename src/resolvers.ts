@@ -21,6 +21,13 @@ export const resolvers = {
     ...taskResolvers.mutations,
     ...projectResolvers.mutations,
   },
+  RootSubscription: {
+    ...authResolvers.subscriptions,
+    ...userResolvers.subscriptions,
+    ...roleResolvers.subscriptions,
+    ...taskResolvers.subscriptions,
+    ...projectResolvers.subscriptions,
+  },
 
   Right: {
     USERS_CREATE: Right.USERS_CREATE,

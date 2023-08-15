@@ -1,6 +1,7 @@
 
 import { APIContext } from "../context.js";
 import { RoleModel } from "../models/role.js";
+import { Events, pubsub } from "../pubsub.js";
 import { Right, getRole, getRoles } from "../utils.js";
 
 export const roleResolvers = {
@@ -27,6 +28,10 @@ export const roleResolvers = {
 
       let result = await role.save();
 
+      pubsub.publish(Events.ROLES_UPDATE, {
+        roles: getRoles.bind(this, {})
+      });
+
       return await getRole({
         _id: result.id,
       });
@@ -46,10 +51,20 @@ export const roleResolvers = {
         ...role.toObject(),
         ...roleUpdateData,
       });
+
+      pubsub.publish(Events.ROLES_UPDATE, {
+        roles: getRoles.bind(this, {})
+      });
   
       return await getRole({
         _id: roleID,
       });
+    },
+  },
+
+  subscriptions: {
+    roles: {
+      subscribe: () => pubsub.asyncIterator([Events.ROLES_UPDATE])
     },
   },
 };

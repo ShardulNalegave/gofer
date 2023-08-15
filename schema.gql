@@ -2,6 +2,7 @@
 schema {
   query: RootQuery,
   mutation: RootMutation,
+  subscription: RootSubscription,
 }
 
 # ===========================================================================================
@@ -69,6 +70,26 @@ type RootMutation {
 # ===========================================================================================
 
 """
+  # Root Subscription
+  Subscriptions defined on the API.
+"""
+type RootSubscription {
+  "Returns logged in user data"
+  loggedInUserData: User
+  "Returns projects assigned to logged in user"
+  loggedInUserProjects: [Project!]
+  "Returns tasks assigned to logged in user"
+  loggedInUserTasks: [Task!]
+
+  users: [User!]
+  roles: [Role!]
+  tasks: [Task!]
+  projects: [Project!]
+}
+
+# ===========================================================================================
+
+"""
   # Auth Data
   Data returned after authentication.
 """
@@ -84,7 +105,7 @@ type AuthData {
 # ===========================================================================================
 
 """
-  # User Type
+  # User Type# ...
   Type definition for User data.
 """
 type User {

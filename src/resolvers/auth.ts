@@ -2,9 +2,10 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
+import { Events, pubsub } from '../pubsub.js';
 import { APIContext } from '../context.js';
 import { UserModel } from "../models/user.js";
-import { Right, getUser } from '../utils.js';
+import { Right, getUser, getUsers } from '../utils.js';
 
 export const authResolvers = {
   queries: {
@@ -19,7 +20,7 @@ export const authResolvers = {
         { userID: user.id, email: user.email },
         process.env.GOFER_JWT_SECRET_KEY,
         {
-          expiresIn: '24h',
+          expiresIn: '1h',
         }
       );
 
@@ -71,10 +72,16 @@ export const authResolvers = {
 
         const result = await newUser.save();
 
+        pubsub.publish(Events.USERS_UPDATE, {
+          tasks: getUsers.bind(this, {})
+        });
+
         return await getUser({ _id: result.id });
       } catch (err) {
         throw err;
       }
     }
   },
+
+  subscriptions: {},
 };

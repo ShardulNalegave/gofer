@@ -1,10 +1,10 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Grid, Image, TextInput, Box, PasswordInput, Title, Text, Button, LoadingOverlay } from '@mantine/core';
 
 import loginScreenBg from '../assets/loginScreenBg.jpg';
 import { useAuth } from '../contexts/Auth';
-import { useGoToRoute } from '../hooks/useGoToRoute';
 import Page from '../components/Page';
 import Spacer from '../components/Spacer';
 
@@ -14,7 +14,7 @@ export default function Login() {
   let [ errorValue, setErrorValue ] = useState(null);
   let [ loginLoading, setLoginLoading ] = useState(false);
   let authData = useAuth();
-  let goToRoute = useGoToRoute();
+  let navigate = useNavigate();
 
   const handleSubmit = () => {
     setErrorValue(null);
@@ -22,7 +22,7 @@ export default function Login() {
     authData.login(emailValue, passwordValue)
       .then(_ => {
         setLoginLoading(false);
-        goToRoute('/dashboard');
+        navigate('/dashboard');
       })
       .catch(err => {
         setLoginLoading(false);

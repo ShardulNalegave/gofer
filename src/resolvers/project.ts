@@ -1,6 +1,7 @@
 
 import { APIContext } from "../context.js";
 import { ProjectModel } from "../models/project.js";
+import { Events, pubsub } from "../pubsub.js";
 import { Right, getProject, getProjects } from "../utils.js";
 
 export const projectResolvers = {
@@ -27,6 +28,10 @@ export const projectResolvers = {
 
       let result = await project.save();
 
+      pubsub.publish(Events.PROJECTS_UPDATE, {
+        projects: getProjects.bind(this, {})
+      });
+
       return await getProject({
         _id: result.id,
       });
@@ -42,14 +47,34 @@ export const projectResolvers = {
       delete projectUpdateData.id;
   
       let project = await ProjectModel.findOne({ _id: projectID });
-      await project.updateOne({
+      let finalData = {
         ...project.toObject(),
         ...projectUpdateData,
+      };
+      await project.updateOne(finalData);
+
+      pubsub.publish(Events.PROJECTS_UPDATE, {
+        projects: getProjects.bind(this, {})
+      });
+
+      if (finalData.assignees.includes(ctx.userID)) pubsub.publish(Events.CURRENT_USER_PROJECTS_UPDATED, {
+        loggedInUserTasks: getProjects.bind(this, {
+          assignees: { $in: [ctx.userID] },
+        }),
       });
   
       return await getProject({
         _id: projectID,
       });
+    },
+  },
+
+  subscriptions: {
+    projects: {
+      subscribe: () => pubsub.asyncIterator([Events.PROJECTS_UPDATE]),
+    },
+    loggedInUserProjects: {
+      subscribe: () => pubsub.asyncIterator([Events.CURRENT_USER_PROJECTS_UPDATED]),
     },
   },
 };
