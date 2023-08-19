@@ -82,6 +82,42 @@ export const projectResolvers = {
         _id: projectID,
       });
     },
+
+    async deleteProject(_parent, args, ctx: APIContext, _info) {
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+      let rights = await ctx.getAllRights();
+      if (!rights.includes(Right.PROJECTS_DELETE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
+
+      await ProjectModel.findOneAndDelete({ _id: args.id });
+
+      // Publish an event as 'projects' were updated
+      pubsub.publish(Events.USERS_UPDATE, {
+        projects: getProjects.bind(this, {}),
+      });
+
+      return getProjects({});
+    },
+
+    async assignUserToProject(_parent, args, ctx: APIContext, _info) {
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+      let rights = await ctx.getAllRights();
+      if (!rights.includes(Right.PROJECTS_UPDATE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
+
+      await ProjectModel.findOneAndUpdate(
+        { _id: args.projectID },
+        { $push: { assignees: args.userID } },
+      );
+
+      // Publish an event as 'projects' were updated
+      pubsub.publish(Events.PROJECTS_UPDATE, {
+        projects: getProjects.bind(this, {}),
+      });
+
+      // Return updated project
+      return getProject({ _id: args.projectID });
+    },
   },
 
   subscriptions: {

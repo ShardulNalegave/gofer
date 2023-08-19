@@ -86,6 +86,42 @@ export const taskResolvers = {
         _id: taskID,
       });
     },
+
+    async deleteTask(_parent, args, ctx: APIContext, _info) {
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+      let rights = await ctx.getAllRights();
+      if (!rights.includes(Right.TASKS_DELETE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
+
+      await TaskModel.findOneAndDelete({ _id: args.id });
+
+      // Publish an event as 'tasks' were updated
+      pubsub.publish(Events.TASKS_UPDATE, {
+        tasks: getTasks.bind(this, {}),
+      });
+
+      return getTasks({});
+    },
+
+    async assignUserToTask(_parent, args, ctx: APIContext, _info) {
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+      let rights = await ctx.getAllRights();
+      if (!rights.includes(Right.TASKS_UPDATE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
+
+      await TaskModel.findOneAndUpdate(
+        { _id: args.taskID },
+        { $push: { assignees: args.userID } },
+      );
+
+      // Publish an event as 'tasks' were updated
+      pubsub.publish(Events.TASKS_UPDATE, {
+        tasks: getTasks.bind(this, {}),
+      });
+
+      // Return updated task
+      return getTask({ _id: args.taskID });
+    },
   },
 
   subscriptions: {

@@ -61,6 +61,22 @@ export const userResolvers = {
         _id: userID,
       });
     },
+
+    async deleteUser(_parent, args, ctx: APIContext, _info) {
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+      let rights = await ctx.getAllRights();
+      if (!rights.includes(Right.USERS_DELETE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
+
+      await UserModel.findOneAndDelete({ _id: args.id });
+
+      // Publish an event as 'users' were updated
+      pubsub.publish(Events.USERS_UPDATE, {
+        users: getUsers.bind(this, {}),
+      });
+
+      return getUsers({});
+    },
   },
 
   subscriptions: {

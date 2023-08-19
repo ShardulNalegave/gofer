@@ -74,6 +74,20 @@ type RootMutation {
   updateTask(updt: TaskUpdate!): Task
   "Updates Projects"
   updateProject(updt: ProjectUpdate!): Project
+
+  "Deletes user with provided ID"
+  deleteUser(id: String!): [User!]
+  "Deletes role with provided ID"
+  deleteRole(id: String!): [Role!]
+  "Deletes task with provided ID"
+  deleteTask(id: String!): [Task!]
+  "Deletes project with provided ID"
+  deleteProject(id: String!): [Project!]
+
+  "Assign user with provided ID to task with provided ID"
+  assignUserToTask(userID: String!, taskID: String!): Task
+  "Assign user with provided ID to project with provided ID"
+  assignUserToProject(userID: String!, projectID: String!): Project
 }
 
 # ===========================================================================================

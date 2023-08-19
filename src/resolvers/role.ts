@@ -72,6 +72,22 @@ export const roleResolvers = {
         _id: roleID,
       });
     },
+
+    async deleteRole(_parent, args, ctx: APIContext, _info) {
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+      let rights = await ctx.getAllRights();
+      if (!rights.includes(Right.ROLES_DELETE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
+
+      await RoleModel.findOneAndDelete({ _id: args.id });
+
+      // Publish an event as 'roles' were updated
+      pubsub.publish(Events.ROLES_UPDATE, {
+        roles: getRoles.bind(this, {}),
+      });
+
+      return getRoles({});
+    }
   },
 
   subscriptions: {
