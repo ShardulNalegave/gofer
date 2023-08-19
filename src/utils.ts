@@ -110,7 +110,7 @@ export const getProjects = async filter => {
   let projects = await ProjectModel.find(filter);
   let tasksbyProjectID = async projectID => await TaskModel.where('project').equals(projectID);
 
-  projects.map(async project => ({
+  return await Promise.all(projects.map(async project => ({
     id: project.id,
     title: project.title,
     description: project.description,
@@ -118,5 +118,5 @@ export const getProjects = async filter => {
     assignees: getUsers.bind(this, {
       _id: { $in: project.assignees },
     }),
-  }));
+  })));
 };

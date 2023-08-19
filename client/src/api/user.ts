@@ -1,7 +1,7 @@
 
 import { gql } from "@apollo/client";
 
-export const GET_USER_BY_ID = gql`
+const GET_USER_BY_ID = gql`
   query GetUserByIDQuery($id: String!) {
     userByID(id: $id) {
       id
@@ -15,9 +15,9 @@ export const GET_USER_BY_ID = gql`
   }
 `;
 
-export const GET_USER_BY_EMAIL = gql`
+const GET_USER_BY_EMAIL = gql`
   query GetUserByEmailQuery($email: String!) {
-    userByID(email: $email) {
+    userByEmail(email: $email) {
       id
       name
       email
@@ -29,12 +29,25 @@ export const GET_USER_BY_EMAIL = gql`
   }
 `;
 
-export const LOGGED_IN_USER_DATA = gql`
+const LOGGED_IN_USER_DATA = gql`
   query {
     loggedInUserData {
       id
       name
       email
+      roles {
+        title
+        rights
+      }
     }
   }
 `;
+
+export default {
+  queries: {
+    LOGGED_IN_USER_DATA,
+    GET_USER_BY_ID,
+    GET_USER_BY_EMAIL,
+  },
+  subscriptions: {},
+};

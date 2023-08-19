@@ -5,8 +5,9 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
-import { LOGIN_QUERY, VALIDATE_AUTH_TOKEN_QUERY } from './auth';
-import { GET_USER_BY_ID, GET_USER_BY_EMAIL, LOGGED_IN_USER_DATA } from './user';
+import auth from './auth';
+import user from './user';
+import project from './project';
 
 const splitLink = (httpLink: HttpLink, wsLink: GraphQLWsLink) => {
   return split(
@@ -46,11 +47,13 @@ export const apolloClient = new ApolloClient({
 });
 
 export const queries = {
-  LOGIN_QUERY,
-  VALIDATE_AUTH_TOKEN_QUERY,
-  GET_USER_BY_EMAIL,
-  GET_USER_BY_ID,
-  LOGGED_IN_USER_DATA,
+  ...auth.queries,
+  ...user.queries,
+  ...project.queries,
 };
 
-export const subscriptions = {}
+export const subscriptions = {
+  ...auth.subscriptions,
+  ...user.subscriptions,
+  ...project.subscriptions,
+}

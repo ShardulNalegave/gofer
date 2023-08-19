@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const LOGIN_QUERY = gql`
+const LOGIN_QUERY = gql`
   query LoginQuery($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       userID
@@ -10,7 +10,7 @@ export const LOGIN_QUERY = gql`
   }
 `;
 
-export const VALIDATE_AUTH_TOKEN_QUERY = gql`
+const VALIDATE_AUTH_TOKEN_QUERY = gql`
   query ValidateAuthTokenQuery($token: String!) {
     validateAuthToken(token: $token) {
       userID
@@ -19,3 +19,11 @@ export const VALIDATE_AUTH_TOKEN_QUERY = gql`
     }
   }
 `;
+
+export default {
+  queries: {
+    LOGIN_QUERY,
+    VALIDATE_AUTH_TOKEN_QUERY,
+  },
+  subscriptions: {},
+};

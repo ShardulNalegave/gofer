@@ -222,6 +222,7 @@ input TaskInput {
   title: String
   description: String
   project: String
+  due: Date
 }
 
 input TaskUpdate {

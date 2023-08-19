@@ -4,7 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Grid, Center, Loader } from '@mantine/core';
 
 import { validateToken } from './authUtils';
-import { routesCompleteUI } from './router';
+import { noSideBarRoutes } from './router';
 import Sidebar from './components/Sidebar';
 import Page from './components/Page';
 
@@ -28,7 +28,7 @@ export default function App() {
       : 
       <Grid gutter={0}>
         {
-          routesCompleteUI.includes(loc.pathname) ?
+          !noSideBarRoutes.includes(loc.pathname) ?
             <Grid.Col span="content">
               <Sidebar />
             </Grid.Col>

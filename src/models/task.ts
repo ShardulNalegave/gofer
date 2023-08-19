@@ -4,7 +4,7 @@ import { Schema, model } from 'mongoose';
 export interface ITask {
   title: string,
   description: string,
-  project: string,
+  project: string | null,
   assignees: string[],
   completed: boolean,
   due: Date,
@@ -21,7 +21,7 @@ export const TaskSchema = new Schema<ITask>({
   },
   project: {
     type: String,
-    required: true,
+    required: false,
     default: null,
   },
   assignees: {

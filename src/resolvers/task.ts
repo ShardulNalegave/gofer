@@ -40,8 +40,8 @@ export const taskResolvers = {
         title: args.inp.title,
         description: args.inp.description,
         project: args.inp.project,
+        due: args.inp.due,
         completed: false,
-        due: Date.now(),
       });
 
       // Save the document
