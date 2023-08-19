@@ -2,8 +2,9 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { Center, Loader } from "@mantine/core";
 
-import { apolloClient, queries } from "../api/api";
+import { apolloClient, getApolloClientLink, queries } from "../api/api";
 import Page from "../components/Page";
+import { APIErrors } from "../api/errors";
 
 export interface AuthData {
   isAuth: boolean,
@@ -28,27 +29,37 @@ const initialValue: AuthData = {
       this.userEmail = null;
       this.userID = null;
       this.token = null;
+      apolloClient.setLink(getApolloClientLink(null));
       return this;
     }
 
-    let res = await apolloClient.query({
-      query: queries.VALIDATE_AUTH_TOKEN_QUERY,
-      variables: {
-        token: this.token,
-      },
-    });
+    let res: any;
+    try {
+      res = await apolloClient.query({
+        query: queries.VALIDATE_AUTH_TOKEN_QUERY,
+        variables: {
+          token: this.token,
+        },
+      });
+    } catch (err: any) {
+      if (err.message === APIErrors.TOKEN_EXPIRED) {
+        localStorage.removeItem('auth-token');
+      }
+    }
 
     if (!res.data.validateAuthToken) {
       this.isAuth = false;
       this.userEmail = null;
       this.userID = null;
       this.token = null;
+      apolloClient.setLink(getApolloClientLink(null));
       return this;
     }
 
     this.isAuth = true;
     this.userEmail = res.data.validateAuthToken.userEmail;
     this.userID = res.data.validateAuthToken.userID;
+    apolloClient.setLink(getApolloClientLink(this.token));
     return this;
   },
 
@@ -59,10 +70,21 @@ const initialValue: AuthData = {
     if (!email || email === '') throw new Error('Invalid email provided');
     if (!password || password === '') throw new Error('Invalid password provided');
 
-    let res = await apolloClient.query({
-      query: queries.LOGIN_QUERY,
-      variables: { email, password },
-    });
+    let res: any;
+    try {
+      res = await apolloClient.query({
+        query: queries.LOGIN_QUERY,
+        variables: { email, password },
+      });
+    } catch (err: any) {
+      if (err.message === APIErrors.USER_DOES_NOT_EXIST) {
+        throw new Error('User does not exist');
+      } else if (err.message === APIErrors.INCORRECT_PASSWORD) {
+        throw new Error('Incorrect password provided');
+      } else {
+        throw err;
+      }
+    }
 
     if (!res.data.login || res.errors) throw new Error('Login failed. Please check your credentials.');
 
@@ -71,6 +93,8 @@ const initialValue: AuthData = {
     this.userEmail = res.data.login.userEmail;
     this.userID = res.data.login.userID;
     localStorage.setItem('auth-token', res.data.login.token);
+
+    apolloClient.setLink(getApolloClientLink(res.data.login.token));
 
     return this;
   },
@@ -81,6 +105,8 @@ const initialValue: AuthData = {
     this.userID = null;
     this.token = null;
     this.isAuth = false;
+
+    apolloClient.setLink(getApolloClientLink(null));
 
     return this;
   },

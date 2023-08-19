@@ -4,6 +4,7 @@ import { RoleModel } from "./models/role.js";
 import { TaskModel } from "./models/task.js";
 import { ProjectModel } from "./models/project.js";
 
+// Helper enum for all availabe rights
 export enum Right {
   USERS_CREATE = "USERS_CREATE",
   USERS_UPDATE = "USERS_UPDATE",
@@ -15,6 +16,7 @@ export enum Right {
   PROJECTS_UPDATE = "PROJECTS_UPDATE",
 }
 
+// Returns user based on provided filter
 export const getUser = async filter => {
   let data = await UserModel.findOne(filter);
   let roles = getRoles.bind(this, {
@@ -28,6 +30,7 @@ export const getUser = async filter => {
   };
 };
 
+// Returns users based on provided filter
 export const getUsers = async filter => {
   let users = await UserModel.find(filter);
   return await Promise.all(users.map(async user => ({
@@ -40,14 +43,17 @@ export const getUsers = async filter => {
   })));
 };
 
+// Returns role based on provided filter
 export const getRole = async filter => {
   return await RoleModel.findOne(filter);
 };
 
+// Returns roles based on provided filter
 export const getRoles = async filter => {
   return await RoleModel.find(filter);
 };
 
+// Returns task based on provided filter
 export const getTask = async filter => {
   let task = await TaskModel.findOne(filter);
   let project = getProject.bind(this, {
@@ -66,6 +72,7 @@ export const getTask = async filter => {
   }
 };
 
+// Returns tasks based on provided filter
 export const getTasks = async filters => {
   let tasks = await TaskModel.find(filters);
   return await Promise.all(tasks.map(async task => ({
@@ -81,6 +88,7 @@ export const getTasks = async filters => {
   })));
 };
 
+// Returns project based on provied filter
 export const getProject = async filters => {
   let project = await ProjectModel.findOne(filters);
   let assignees = getUsers.bind(this, {
@@ -97,6 +105,7 @@ export const getProject = async filters => {
   };
 };
 
+// Returns projects based on provided filter
 export const getProjects = async filter => {
   let projects = await ProjectModel.find(filter);
   let tasksbyProjectID = async projectID => await TaskModel.where('project').equals(projectID);

@@ -14,20 +14,29 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 
 import { resolvers } from './resolvers.js';
-import { APIContext, getAPIContext_Express, getAPIContext_WebSocket } from './context.js';
-
-const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
+import {
+  APIContext,
+  getAPIContext_Express,
+  getAPIContext_WebSocket,
+} from './context.js';
 
 // Load .env file
 dotenv.config();
 
+// Read our schema file for GQL type-definitions
+const typeDefs = readFileSync('schema.gql', { encoding: 'utf-8' });
+
+// Connect to our MongoDB instance
 await mongoose.connect(`${process.env.GOFER_MONGODB_URI}/${process.env.GOFER_MONGODB_DATABASE}`);
 
+// Initialize Express & HTTP server instances
 const app = express();
 const httpServer = http.createServer(app);
 
+// Create our schema based
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
+// Initialize WebSocket server for GQL Subscriptions
 const wsServer = new WebSocketServer({
   server: httpServer,
   path: '/',
@@ -39,6 +48,7 @@ const serverCleanup = useServer({
   },
 }, wsServer);
 
+// Initialize Apollo Server
 const server = new ApolloServer<APIContext>({
   schema,
   plugins: [
@@ -55,8 +65,10 @@ const server = new ApolloServer<APIContext>({
     },
   ],
 });
+// Run apollo server instance
 await server.start();
 
+// Make sure apollo server handles the '/' route with required CORS headers
 app.use(
   '/',
   cors<cors.CorsRequest>({
@@ -68,6 +80,7 @@ app.use(
   }),
 )
 
+// Finally, start listening on specified host and port
 await new Promise<void>(resolve => {
   httpServer.listen(Number(process.env.GOFER_PORT), process.env.GOFER_HOST, resolve);
 });

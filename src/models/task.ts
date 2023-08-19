@@ -6,6 +6,8 @@ export interface ITask {
   description: string,
   project: string,
   assignees: string[],
+  completed: boolean,
+  due: Date,
 }
 
 export const TaskSchema = new Schema<ITask>({
@@ -26,6 +28,16 @@ export const TaskSchema = new Schema<ITask>({
     type: [String],
     required: true,
     default: [],
+  },
+  completed: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  due: {
+    type: Date,
+    required: true,
+    default: Date.now(),
   },
 });
 

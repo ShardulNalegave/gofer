@@ -1,4 +1,6 @@
 
+scalar Date
+
 schema {
   query: RootQuery,
   mutation: RootMutation,
@@ -39,6 +41,13 @@ type RootQuery {
   login(email: String!, password: String!): AuthData!
   "Validates the provided token (Auth query)"
   validateAuthToken(token: String!): AuthData!
+
+  "Get Logged-In User Data"
+  loggedInUserData: User
+  "Get Logged-In User Tasks"
+  loggedInUserTasks: [Task!]
+  "Get Logged-In User Projects"
+  loggedInUserProjects: [Project!]
 }
 
 # ===========================================================================================
@@ -74,16 +83,13 @@ type RootMutation {
   Subscriptions defined on the API.
 """
 type RootSubscription {
-  "Returns logged in user data"
-  loggedInUserData: User
-  "Returns projects assigned to logged in user"
-  loggedInUserProjects: [Project!]
-  "Returns tasks assigned to logged in user"
-  loggedInUserTasks: [Task!]
-
+  "Returns all users"
   users: [User!]
+  "Returns all roles"
   roles: [Role!]
+  "Returns all tasks"
   tasks: [Task!]
+  "Returns all projects"
   projects: [Project!]
 }
 
@@ -206,6 +212,10 @@ type Task {
   project: Project
   "Users assigned to this task"
   assignees: [User!]
+  "Completion status of task"
+  completed: Boolean
+  "Due Date of task"
+  due: Date
 }
 
 input TaskInput {
@@ -220,6 +230,8 @@ input TaskUpdate {
   description: String
   project: String
   assignees: [String!]
+  completed: Boolean
+  due: Date
 }
 
 # ===========================================================================================

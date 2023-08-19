@@ -28,3 +28,22 @@ export const GET_USER_BY_EMAIL = gql`
     }
   }
 `;
+
+export const LOGGED_IN_USER_DATA = gql`
+  query {
+    loggedInUserData {
+      id
+      name
+      email
+    }
+  }
+`;
+export const LOGGED_IN_USER_DATA_SUB = gql`
+  subscription {
+    loggedInUserData {
+      id
+      name
+      email
+    }
+  }
+`;

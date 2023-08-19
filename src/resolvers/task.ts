@@ -1,5 +1,6 @@
 
 import { APIContext } from "../context.js";
+import { Errors } from "../errors.js";
 import { TaskModel } from "../models/task.js";
 import { Events, pubsub } from "../pubsub.js";
 import { Right, getTask, getTasks } from "../utils.js";
@@ -7,46 +8,67 @@ import { Right, getTask, getTasks } from "../utils.js";
 export const taskResolvers = {
   queries: {
     async tasks(_parent, _args, _contextValue: APIContext, _info) {
+      // Return tasks
       return await getTasks({});
     },
 
     async task(_parent, args, _contextValue: APIContext, _info) {
+      // Return task with provided ID
       return await getTask({ _id: args.id });
     },
+
+    async loggedInUserTasks(_parent, _args, ctx: APIContext, _info) {
+      // Check auth-status
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
+
+      // Return tasks
+      return getTasks({
+        assignees: { $in: [ctx.userID] },
+      });
+    }
   },
 
   mutations: {
     async createTask(_parent, args, ctx: APIContext, _info) {
-      if (!ctx.isAuth) throw new Error("Operation requires login!");
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
       let rights = await ctx.getAllRights();
-      if (!rights.includes(Right.TASKS_CREATE)) throw new Error('Your roles don\'t provide you with enough rights for this action.');
+      if (!rights.includes(Right.TASKS_CREATE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
 
+      // Create new document
       let task = new TaskModel({
         title: args.inp.title,
         description: args.inp.description,
         project: args.inp.project,
+        completed: false,
+        due: Date.now(),
       });
 
+      // Save the document
       let result = await task.save();
 
+      // Publish event as 'tasks' were updated
       pubsub.publish(Events.TASKS_UPDATE, {
         tasks: getTasks.bind(this, {})
       });
 
+      // Return newly created task
       return await getTask({
         _id: result.id,
       });
     },
 
     async updateTask(_parent, args, ctx: APIContext, _info) {
-      if (!ctx.isAuth) throw new Error("Operation requires login!");
+      // Check auth-status and if enough rights are present
+      if (!ctx.isAuth) throw new Error(Errors.REQUIRES_LOGIN);
       let rights = await ctx.getAllRights();
-      if (!rights.includes(Right.TASKS_UPDATE)) throw new Error('Your roles don\'t provide you with enough rights for this action.');
+      if (!rights.includes(Right.TASKS_UPDATE)) throw new Error(Errors.NOT_ENOUGH_RIGHTS);
   
       let taskID = args.updt.id;
       let taskUpdateData = args.updt;
       delete taskUpdateData.id;
   
+      // Find and update
       let task = await TaskModel.findOne({ _id: taskID });
       let finalData = {
         ...task.toObject(),
@@ -54,16 +76,12 @@ export const taskResolvers = {
       };
       await task.updateOne(finalData);
 
+      // Publish event as 'tasks' were updated
       pubsub.publish(Events.TASKS_UPDATE, {
         tasks: getTasks.bind(this, {})
       });
-
-      if (finalData.assignees.includes(ctx.userID)) pubsub.publish(Events.CURRENT_USER_TASKS_UPDATED, {
-        loggedInUserTasks: getTasks.bind(this, {
-          assignees: { $in: [ctx.userID] },
-        }),
-      });
-  
+      
+      // Return updated task
       return await getTask({
         _id: taskID,
       });
@@ -73,9 +91,6 @@ export const taskResolvers = {
   subscriptions: {
     tasks: {
       subscribe: () => pubsub.asyncIterator([Events.TASKS_UPDATE])
-    },
-    loggedInUserTasks: {
-      subscribe: () => pubsub.asyncIterator([Events.CURRENT_USER_TASKS_UPDATED]),
     },
   },
 };
