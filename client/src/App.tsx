@@ -1,40 +1,42 @@
 
-import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Grid } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Grid, Center, Loader } from '@mantine/core';
 
-import { authProtectedRoutes, authUnprotectedRoute, routesCompleteUI } from './router';
-import { useAuth } from './contexts/Auth';
+import { validateToken } from './authUtils';
+import { routesCompleteUI } from './router';
 import Sidebar from './components/Sidebar';
+import Page from './components/Page';
 
 export default function App() {
   let loc = useLocation();
-  let navigate = useNavigate();
-  let authData = useAuth();
+  const [ loading, setLoading ] = useState(true);
 
   useEffect(() => {
-    (async () => {
-      await authData.validate();
-      if (authProtectedRoutes.includes(loc.pathname) && !authData.isAuth) {
-        navigate('/login');
-      } else if (authUnprotectedRoute.includes(loc.pathname) && authData.isAuth) {
-        navigate('/dashboard');
-      }
-    })();
-  }, [loc]);
+    validateToken()
+      .then(_ => setLoading(false))
+      .catch(_ => setLoading(false));
+  }, []);
 
   return (
-    <Grid gutter={0}>
-      {
-        routesCompleteUI.includes(loc.pathname) ?
-          <Grid.Col span="content">
-            <Sidebar />
-          </Grid.Col>
-          : <></>
-      }
-      <Grid.Col span="auto">
-        <Outlet />
-      </Grid.Col>
-    </Grid>
+    loading ?
+      <Page scroll={false} padding={0}>
+        <Center style={{ height: '100vh' }}>
+          <Loader />
+        </Center>
+      </Page>
+      : 
+      <Grid gutter={0}>
+        {
+          routesCompleteUI.includes(loc.pathname) ?
+            <Grid.Col span="content">
+              <Sidebar />
+            </Grid.Col>
+            : <></>
+        }
+        <Grid.Col span="auto">
+          <Outlet />
+        </Grid.Col>
+      </Grid>
   );
 }

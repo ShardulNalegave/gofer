@@ -1,5 +1,5 @@
 
-export enum APIErrors {
+export enum Errors {
   INVALID_TOKEN = 'INVALID_TOKEN',
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   USER_DOES_NOT_EXIST = 'USER_DOES_NOT_EXIST',

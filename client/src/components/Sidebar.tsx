@@ -4,8 +4,8 @@ import { IconHome, IconCalendar, IconSettings, IconChecklist, IconBulbFilled } f
 import { Button, createStyles, Grid, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
-import { useAuth } from '../contexts/Auth';
 import Spacer from './Spacer';
+import { logoutUser } from '../authUtils';
 
 const useStyles = createStyles((_) => ({
   mainContainer: {
@@ -19,7 +19,6 @@ const useStyles = createStyles((_) => ({
 
 export default function Sidebar() {
   const { classes } = useStyles();
-  const authData = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -31,7 +30,8 @@ export default function Sidebar() {
       <SidebarButton to='/settings' icon={ <IconSettings /> } title='Settings' />
       <Spacer height={15} />
       <Button style={{ width: '100%' }} color='red' onClick={() => {
-        authData.logout().then(_ => navigate('/login'));
+        logoutUser();
+        navigate('/login');
       }}>Log Out</Button>
     </main>
   );

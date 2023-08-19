@@ -38,12 +38,3 @@ export const LOGGED_IN_USER_DATA = gql`
     }
   }
 `;
-export const LOGGED_IN_USER_DATA_SUB = gql`
-  subscription {
-    loggedInUserData {
-      id
-      name
-      email
-    }
-  }
-`;

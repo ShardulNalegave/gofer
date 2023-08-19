@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre&family=Nunito&family=Overpass+Mono&family=Raleway&display=swap');
 
-.heading-font, h1, h2, h3, h4, h5, h6 {
+.heading-font {
     font-family: 'Raleway', 'Nunito', sans-serif !important;
 }
 
@@ -14,8 +14,4 @@
 
 .serif-font {
     font-family: 'Abhaya Libre', serif !important;
-}
-
-* {
-    font-family: 'Nunito', sans-serif !important;
 }
