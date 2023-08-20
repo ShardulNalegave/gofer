@@ -25,5 +25,8 @@ export default {
     LOGIN_QUERY,
     VALIDATE_AUTH_TOKEN_QUERY,
   },
+
+  mutations: {},
+
   subscriptions: {},
 };

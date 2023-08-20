@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Image, TextInput, Box, PasswordInput, Title, Text, Button, LoadingOverlay } from '@mantine/core';
 
+import { loginUser } from '../authUtils';
+import { useLoggedInUserData } from '../contexts/loggedInUserData';
 import loginScreenBg from '../assets/loginScreenBg.jpg';
 import Page from '../components/Page';
 import Spacer from '../components/Spacer';
-import { loginUser } from '../authUtils';
 
 export default function Login() {
   let [ emailValue, setEmailValue ] = useState('');
@@ -14,12 +15,14 @@ export default function Login() {
   let [ errorValue, setErrorValue ] = useState(null);
   let [ loginLoading, setLoginLoading ] = useState(false);
   let navigate = useNavigate();
+  let { refetch } = useLoggedInUserData();
 
   const handleSubmit = async () => {
     setErrorValue(null);
     setLoginLoading(true);
     try {
       await loginUser(emailValue, passwordValue);
+      await refetch({});
       navigate('/dashboard');
     } catch (err: any) {
       setLoginLoading(false);

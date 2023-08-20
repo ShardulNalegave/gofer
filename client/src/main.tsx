@@ -8,12 +8,15 @@ import './index.css';
 import { router } from './router';
 import { apolloClient } from './api/api';
 import { AppTheme } from './theme';
+import { LoggerInUserDataProvider } from './contexts/loggedInUserData';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApolloProvider client={apolloClient}>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={ AppTheme }>
-        <RouterProvider router={router} />
+        <LoggerInUserDataProvider>
+          <RouterProvider router={router} />
+        </LoggerInUserDataProvider>
       </MantineProvider>
     </ApolloProvider>
   </React.StrictMode>

@@ -7,6 +7,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 import auth from './auth';
 import user from './user';
+import task from './task';
 import project from './project';
 
 const splitLink = (httpLink: HttpLink, wsLink: GraphQLWsLink) => {
@@ -49,11 +50,20 @@ export const apolloClient = new ApolloClient({
 export const queries = {
   ...auth.queries,
   ...user.queries,
+  ...task.queries,
   ...project.queries,
+};
+
+export const mutations = {
+  ...auth.mutations,
+  ...user.mutations,
+  ...task.mutations,
+  ...project.mutations,
 };
 
 export const subscriptions = {
   ...auth.subscriptions,
   ...user.subscriptions,
+  ...task.subscriptions,
   ...project.subscriptions,
 }

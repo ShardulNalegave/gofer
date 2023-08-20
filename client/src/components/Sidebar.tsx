@@ -1,11 +1,12 @@
 
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IconHome, IconCalendar, IconSettings, IconChecklist, IconBulbFilled } from '@tabler/icons-react';
+import { IconHome, IconCalendar, IconSettings, IconChecklist, IconBulbFilled, IconUsers, IconChecks } from '@tabler/icons-react';
 import { Button, createStyles, Grid, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
-import Spacer from './Spacer';
 import { logoutUser } from '../authUtils';
+import { useLoggedInUserData } from '../contexts/loggedInUserData';
+import Spacer from './Spacer';
 
 const useStyles = createStyles((_) => ({
   mainContainer: {
@@ -20,6 +21,7 @@ const useStyles = createStyles((_) => ({
 export default function Sidebar() {
   const { classes } = useStyles();
   const navigate = useNavigate();
+  const { refetch } = useLoggedInUserData();
 
   return (
     <main className={classes.mainContainer}>
@@ -27,10 +29,13 @@ export default function Sidebar() {
       <SidebarButton to='/calendar' icon={ <IconCalendar /> } title='Calendar' />
       <SidebarButton to='/tasks' icon={ <IconChecklist /> } title='Tasks' />
       <SidebarButton to='/projects' icon={ <IconBulbFilled /> } title='Projects' />
+      <SidebarButton to='/users' icon={ <IconUsers /> } title='Users' />
+      <SidebarButton to='/roles' icon={ <IconChecks /> } title='Roles' />
       <SidebarButton to='/settings' icon={ <IconSettings /> } title='Settings' />
       <Spacer height={15} />
-      <Button style={{ width: '100%' }} color='red' onClick={() => {
-        logoutUser();
+      <Button style={{ width: '100%' }} color='red' onClick={async () => {
+        await logoutUser();
+        await refetch({});
         navigate('/login');
       }}>Log Out</Button>
     </main>

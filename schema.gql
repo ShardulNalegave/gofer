@@ -260,19 +260,27 @@ enum Right {
   USERS_CREATE,
   "Allows updating user data"
   USERS_UPDATE,
+  "Allows deleting users"
+  USERS_DELETE,
 
   "Allows creating new roles"
   ROLES_CREATE,
   "Allows updating roles"
   ROLES_UPDATE,
+  "Allows deleting roles"
+  ROLES_DELETE,
 
   "Allows creating new projects"
   PROJECTS_CREATE,
   "Allows updating project data"
   PROJECTS_UPDATE,
+  "Allows deleting projects"
+  PROJECTS_DELETE,
 
   "Allows creating new tasks"
   TASKS_CREATE,
   "Allows updating tasks"
   TASKS_UPDATE,
+  "Allows deleting tasks"
+  TASKS_DELETE,
 }

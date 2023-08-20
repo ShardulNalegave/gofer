@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { createStyles, Text, Center, Loader, Title, Tabs, Paper, Checkbox, Grid, Button } from '@mantine/core';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
-import { queries } from '../api/api';
+import { mutations, queries } from '../api/api';
+import { useLoggedInUserData } from '../contexts/loggedInUserData';
 import Page from '../components/Page';
 import Spacer from '../components/Spacer';
-import { IconChecklist, IconUsers } from '@tabler/icons-react';
+import { IconChecklist, IconEdit, IconUsers } from '@tabler/icons-react';
 import moment from 'moment';
 
 const useStyles = createStyles({});
@@ -19,6 +20,8 @@ export default function Project() {
     pollInterval: 1000,
     variables: { id: params.id },
   });
+  let [ setTaskCompleted, {} ] = useMutation(mutations.SET_TASK_COMPLETED);
+  let { userData } = useLoggedInUserData();
 
   let [ onlyMyTasks, setOnlyMyTasks ] = useState(false);
   let [ showCompleted, setShowCompleted ] = useState(false);
@@ -31,6 +34,8 @@ export default function Project() {
           <Title>{data.project.title}</Title>
           <Spacer height={10} />
           <Text>{data.project.description}</Text>
+          <Spacer height={15} />
+          <Button size='xs' leftIcon={<IconEdit />}>Edit</Button>
         </div>
         <Tabs defaultValue="tasks">
           <Tabs.List defaultValue="tasks">
@@ -54,8 +59,10 @@ export default function Project() {
             <Spacer height={20} />
             {data.project.tasks
             .filter((task: any) => {
-              if (task.completed && !showCompleted) return false;
-              return true;
+              let res = true;
+              if (onlyMyTasks && !task.assignees.includes(userData.id)) res = false; 
+              if (task.completed && !showCompleted) res = false;
+              return res;
             }).sort((a: any, b: any) => {
               return b.due - a.due;
             }).map((task: any) => {
@@ -63,7 +70,14 @@ export default function Project() {
                 <Paper style={{ marginTop: '5px', marginBottom: '5px', padding: '15px' }} withBorder key={task.id}>
                   <Grid gutter={0}>
                     <Grid.Col span='auto'>
-                      <Checkbox label={task.title} checked={task.completed} onChange={() => {}} />
+                      <Checkbox label={task.title} checked={task.completed} onChange={() => {
+                        setTaskCompleted({
+                          variables: {
+                            id: task.id,
+                            completed: !task.completed,
+                          },
+                        });
+                      }} />
                     </Grid.Col>
                     <Grid.Col span='content' style={{ paddingLeft: '10px' }}>
                       <Text color='dimmed'>{moment(task.due).format("MMMM Do YYYY")}</Text>

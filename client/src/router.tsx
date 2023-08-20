@@ -15,6 +15,8 @@ import Settings from "./pages/Settings";
 import Tasks from "./pages/Tasks";
 import Projects from "./pages/Projects";
 import Project from "./pages/Project";
+import Users from "./pages/Users";
+import Roles from "./pages/Roles";
 
 const checkAuth = async (authRequired: boolean) => {
   try {
@@ -35,6 +37,8 @@ export const router = createBrowserRouter(
       <Route path="tasks" element={ <Tasks /> } loader={checkAuth.bind(this, true)} />
       <Route path="projects" element={ <Projects /> } loader={checkAuth.bind(this, true)} />
       <Route path="projects/:id" element={ <Project /> } loader={checkAuth.bind(this, true)} />
+      <Route path="users" element={ <Users /> } loader={checkAuth.bind(this, true)} />
+      <Route path="roles" element={ <Roles /> } loader={checkAuth.bind(this, true)} />
       <Route path="settings" element={ <Settings /> } loader={checkAuth.bind(this, true)} />
     </Route>
   ),

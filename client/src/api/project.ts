@@ -23,6 +23,9 @@ const GET_PROJECT = gql`
         description
         completed
         due
+        assignees {
+          id
+        }
       }
     }
   }
@@ -33,5 +36,8 @@ export default {
     GET_PROJECT,
     GET_PROJECTS,
   },
+
+  mutations: {},
+
   subscriptions: {},
 };

@@ -36,6 +36,7 @@ const LOGGED_IN_USER_DATA = gql`
       name
       email
       roles {
+        id
         title
         rights
       }
@@ -49,5 +50,8 @@ export default {
     GET_USER_BY_ID,
     GET_USER_BY_EMAIL,
   },
+
+  mutations: {},
+
   subscriptions: {},
 };

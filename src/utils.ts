@@ -71,6 +71,8 @@ export const getTask = async filter => {
     id: task.id,
     title: task.title,
     description: task.description,
+    completed: task.completed,
+    due: task.due,
     project,
     assignees,
   }
@@ -83,6 +85,8 @@ export const getTasks = async filters => {
     id: task.id,
     title: task.title,
     description: task.description,
+    completed: task.completed,
+    due: task.due,
     project: getProject.bind(this, {
       _id: task.project,
     }),
