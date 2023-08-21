@@ -31,13 +31,25 @@ const GET_PROJECT = gql`
   }
 `;
 
+const ADD_PROJECT = gql`
+  mutation($inp: ProjectInput!) {
+    createProject(inp: $inp) {
+      id
+      title
+      description
+    }
+  }
+`;
+
 export default {
   queries: {
     GET_PROJECT,
     GET_PROJECTS,
   },
 
-  mutations: {},
+  mutations: {
+    ADD_PROJECT,
+  },
 
   subscriptions: {},
 };

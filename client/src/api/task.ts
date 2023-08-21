@@ -1,14 +1,19 @@
 import { gql } from "@apollo/client";
 
-const SET_TASK_COMPLETED = gql`
-  mutation($id: String!, $completed: Boolean!) {
-    updateTask(updt: {
-      id: $id,
-      completed: $completed
-    }) {
+const UPDATE_TASK = gql`
+  mutation($updt: TaskUpdate!) {
+    updateTask(updt: $updt) {
       id
       title
       completed
+    }
+  }
+`;
+
+const ADD_TASK = gql`
+  mutation($inp: TaskInput!) {
+    createTask(inp: $inp) {
+      id
     }
   }
 `;
@@ -17,7 +22,8 @@ export default {
   queries: {},
 
   mutations: {
-    SET_TASK_COMPLETED,
+    UPDATE_TASK,
+    ADD_TASK,
   },
 
   subscriptions: {},

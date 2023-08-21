@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { createStyles, Text, Center, Loader, Title, Tabs, Paper, Checkbox, Grid, Button } from '@mantine/core';
+import { createStyles, Text, Center, Loader, Title, Tabs, Paper, Checkbox, Grid, Button, ActionIcon } from '@mantine/core';
 import { useMutation, useQuery } from '@apollo/client';
 
 import { Right } from '../rights';
@@ -9,8 +9,9 @@ import { mutations, queries } from '../api/api';
 import { useLoggedInUserData } from '../contexts/loggedInUserData';
 import Page from '../components/Page';
 import Spacer from '../components/Spacer';
-import { IconChecklist, IconEdit, IconUsers } from '@tabler/icons-react';
+import { IconChecklist, IconEdit, IconTrash, IconUsers } from '@tabler/icons-react';
 import moment from 'moment';
+import AddTaskModal from '../components/modals/AddTaskModal';
 
 const useStyles = createStyles({});
 
@@ -21,10 +22,9 @@ export default function Project() {
     pollInterval: 1000,
     variables: { id: params.id },
   });
-  let [ setTaskCompleted, {} ] = useMutation(mutations.SET_TASK_COMPLETED);
-  let { userData, rights } = useLoggedInUserData();
+  let [ updateTask, {} ] = useMutation(mutations.UPDATE_TASK);
+  let { rights } = useLoggedInUserData();
 
-  let [ onlyMyTasks, setOnlyMyTasks ] = useState(false);
   let [ showCompleted, setShowCompleted ] = useState(false);
 
   return (
@@ -52,13 +52,11 @@ export default function Project() {
               <Grid.Col span='content'>
                 {
                   rights.includes(Right.TASKS_CREATE) ?
-                    <Button>Add Task</Button> : <></>
+                    <AddTaskModal actionElement={open => <Button onClick={open}>Add Task</Button>} projectID={data.project.id} />
+                    : <></>
                 }
               </Grid.Col>
               <Grid.Col span='auto'></Grid.Col>
-              <Grid.Col span='content' style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-                <Checkbox label="Only my Tasks" checked={onlyMyTasks} onChange={() => {setOnlyMyTasks(!onlyMyTasks)}} />
-              </Grid.Col>
               <Grid.Col span='content' style={{ paddingLeft: '10px', paddingRight: '10px' }}>
                 <Checkbox label="Show completed" checked={showCompleted} onChange={() => setShowCompleted(!showCompleted)}/>
               </Grid.Col>
@@ -67,7 +65,6 @@ export default function Project() {
             {data.project.tasks
             .filter((task: any) => {
               let res = true;
-              if (onlyMyTasks && !task.assignees.includes(userData.id)) res = false; 
               if (task.completed && !showCompleted) res = false;
               return res;
             }).sort((a: any, b: any) => {
@@ -78,16 +75,25 @@ export default function Project() {
                   <Grid gutter={0}>
                     <Grid.Col span='auto'>
                       <Checkbox label={task.title} checked={task.completed} onChange={() => {
-                        setTaskCompleted({
+                        updateTask({
                           variables: {
-                            id: task.id,
-                            completed: !task.completed,
+                            updt: {
+                              id: task.id,
+                              completed: !task.completed,
+                            }
                           },
                         });
                       }} disabled={!rights.includes(Right.TASKS_UPDATE)} />
+                      <Spacer height={10} />
+                      <Text color='dimmed'>{task.description}</Text>
                     </Grid.Col>
                     <Grid.Col span='content' style={{ paddingLeft: '10px' }}>
                       <Text color='dimmed'>{moment(task.due).format("MMMM Do YYYY")}</Text>
+                    </Grid.Col>
+                    <Grid.Col span='content' style={{ paddingLeft: '20px' }}>
+                      <ActionIcon color='dimmed' style={{ display: 'inline-block' }}><IconEdit /></ActionIcon>
+                      <Spacer width={5} span />
+                      <ActionIcon color='red' style={{ display: 'inline-block' }}><IconTrash /></ActionIcon>
                     </Grid.Col>
                   </Grid>
                 </Paper>

@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/client';
 
 import { queries } from '../api/api';
 import Page from '../components/Page';
+import AddProjectModal from '../components/modals/AddProject';
 
 const useStyles = createStyles({});
 
@@ -37,11 +38,21 @@ export default function Projects() {
             );
           })}
           <Grid.Col span='content' style={{ padding: '8px' }}>
-            <Paper shadow="sm" radius="md" withBorder style={{ padding: '20px', width: '300px', height: '200px', cursor: 'pointer' }}>
-              <Center style={{ height: '100%', width: '100%' }}>
-                <IconPlus />
-              </Center>
-            </Paper>
+            <AddProjectModal
+              actionElement={open => (
+                <Paper
+                  shadow="sm"
+                  radius="md"
+                  withBorder
+                  style={{ padding: '20px', width: '300px', height: '200px', cursor: 'pointer' }}
+                  onClick={open}
+                >
+                  <Center style={{ height: '100%', width: '100%' }}>
+                    <IconPlus />
+                  </Center>
+                </Paper>
+              )}
+            />
           </Grid.Col>
         </Grid>
       </Page>
