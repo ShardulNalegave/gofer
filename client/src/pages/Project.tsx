@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { createStyles, Text, Center, Loader, Title, Tabs, Paper, Checkbox, Grid, Button } from '@mantine/core';
 import { useMutation, useQuery } from '@apollo/client';
 
+import { Right } from '../rights';
 import { mutations, queries } from '../api/api';
 import { useLoggedInUserData } from '../contexts/loggedInUserData';
 import Page from '../components/Page';
@@ -21,7 +22,7 @@ export default function Project() {
     variables: { id: params.id },
   });
   let [ setTaskCompleted, {} ] = useMutation(mutations.SET_TASK_COMPLETED);
-  let { userData } = useLoggedInUserData();
+  let { userData, rights } = useLoggedInUserData();
 
   let [ onlyMyTasks, setOnlyMyTasks ] = useState(false);
   let [ showCompleted, setShowCompleted ] = useState(false);
@@ -35,7 +36,10 @@ export default function Project() {
           <Spacer height={10} />
           <Text>{data.project.description}</Text>
           <Spacer height={15} />
-          <Button size='xs' leftIcon={<IconEdit />}>Edit</Button>
+          {
+            rights.includes(Right.PROJECTS_UPDATE) ?
+              <Button size='xs' leftIcon={<IconEdit />}>Edit</Button> : <></>
+          }
         </div>
         <Tabs defaultValue="tasks">
           <Tabs.List defaultValue="tasks">
@@ -46,7 +50,10 @@ export default function Project() {
           <Tabs.Panel value="tasks" style={{ padding: '30px' }}>
             <Grid gutter={0} align='center'>
               <Grid.Col span='content'>
-                <Button>Add Task</Button>
+                {
+                  rights.includes(Right.TASKS_CREATE) ?
+                    <Button>Add Task</Button> : <></>
+                }
               </Grid.Col>
               <Grid.Col span='auto'></Grid.Col>
               <Grid.Col span='content' style={{ paddingLeft: '10px', paddingRight: '10px' }}>
@@ -77,7 +84,7 @@ export default function Project() {
                             completed: !task.completed,
                           },
                         });
-                      }} />
+                      }} disabled={!rights.includes(Right.TASKS_UPDATE)} />
                     </Grid.Col>
                     <Grid.Col span='content' style={{ paddingLeft: '10px' }}>
                       <Text color='dimmed'>{moment(task.due).format("MMMM Do YYYY")}</Text>

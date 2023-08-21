@@ -9,14 +9,16 @@ import { logoutUser } from "../authUtils";
 
 interface ILoggedInUserData {
   userData: any,
+  rights: String[],
   refetch: (variables: Partial<OperationVariables>) => Promise<void>,
 }
 
-const initialValue = {};
-const loggedInUserDataContext = createContext<ILoggedInUserData>({
-  userData: initialValue,
+const initialValue: ILoggedInUserData = {
+  userData: {},
+  rights: [],
   refetch: async (_: Partial<OperationVariables>) => {},
-});
+};
+const loggedInUserDataContext = createContext<ILoggedInUserData>(initialValue);
 
 export const useLoggedInUserData = () => useContext(loggedInUserDataContext);
 
@@ -25,7 +27,8 @@ interface LoggerInUserDataProviderProps {
 }
 
 export function LoggerInUserDataProvider({ children } : LoggerInUserDataProviderProps) {
-  let [ value, setValue ] = useState(initialValue);
+  let [ value, setValue ] = useState({});
+  let [ rights, setRights ] = useState<String[]>([]);
   let { loading, error, data, refetch } = useQuery(queries.LOGGED_IN_USER_DATA, {
     variables: {},
     pollInterval: 1000,
@@ -34,7 +37,18 @@ export function LoggerInUserDataProvider({ children } : LoggerInUserDataProvider
   useEffect(() => {
     if (!loading && !error && data) {
       setValue(data.loggedInUserData);
+      if (data.loggedInUserData.roles) {
+        let rights: String[] = [];
+        data.loggedInUserData.roles.forEach((role: any) => {
+          rights = [
+            ...rights,
+            ...role.rights,
+          ];
+        });
+        setRights(rights);
+      } else setRights([]);
     } else if (error) {
+      console.log(error);
       setValue({});
       logoutUser();
     }
@@ -44,6 +58,7 @@ export function LoggerInUserDataProvider({ children } : LoggerInUserDataProvider
     (!loading) ?
       <loggedInUserDataContext.Provider value={{
         userData: value,
+        rights,
         refetch: async (variables: Partial<OperationVariables>) => {
           await refetch(variables);
         },
